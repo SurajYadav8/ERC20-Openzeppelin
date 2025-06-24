@@ -43,7 +43,7 @@ contract OurTokenTest is Test {
     }
 
     function testTransferBetweenAccounts() public {
-        uint transferAmount = 10 ether;
+        uint256 transferAmount = 10 ether;
         vm.prank(bob);
         ourToken.transfer(alice, transferAmount);
 
@@ -52,14 +52,7 @@ contract OurTokenTest is Test {
     }
 
     function testInsufficientTransferShouldFail() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                IERC20Errors.ERC20InsufficientBalance.selector,
-                alice,
-                0,
-                1 ether
-            )
-        );
+        vm.expectRevert(abi.encodeWithSelector(IERC20Errors.ERC20InsufficientBalance.selector, alice, 0, 1 ether));
         vm.prank(alice);
         ourToken.transfer(bob, 1 ether);
     }
@@ -85,10 +78,7 @@ contract OurTokenTest is Test {
 
         assertEq(ourToken.balanceOf(alice), transferAmount);
         assertEq(ourToken.balanceOf(bob), STARTING_BALANCE - transferAmount);
-        assertEq(
-            ourToken.allowance(bob, alice),
-            allowanceAmount - transferAmount
-        );
+        assertEq(ourToken.allowance(bob, alice), allowanceAmount - transferAmount);
     }
 
     function testTransferFromWithoutApprovalShouldFail() public {
@@ -123,24 +113,14 @@ contract OurTokenTest is Test {
     }
 
     function testTransferToZeroAddressShouldFail() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                IERC20Errors.ERC20InvalidReceiver.selector,
-                address(0)
-            )
-        );
+        vm.expectRevert(abi.encodeWithSelector(IERC20Errors.ERC20InvalidReceiver.selector, address(0)));
 
         vm.prank(bob);
         ourToken.transfer(address(0), 10 ether);
     }
 
     function testApproveToZeroAddressShouldFail() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                IERC20Errors.ERC20InvalidSpender.selector,
-                address(0)
-            )
-        );
+        vm.expectRevert(abi.encodeWithSelector(IERC20Errors.ERC20InvalidSpender.selector, address(0)));
 
         vm.prank(bob);
         ourToken.approve(address(0), 10 ether);
@@ -156,12 +136,7 @@ contract OurTokenTest is Test {
         ourToken.approve(alice, 100 ether);
 
         // Expect revert on invalid receiver
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                IERC20Errors.ERC20InvalidReceiver.selector,
-                address(0)
-            )
-        );
+        vm.expectRevert(abi.encodeWithSelector(IERC20Errors.ERC20InvalidReceiver.selector, address(0)));
 
         // Try to transfer to zero address via transferFrom
         vm.prank(alice);
@@ -177,6 +152,4 @@ contract OurTokenTest is Test {
         assertTrue(success);
         assertEq(ourToken.balanceOf(alice), amount);
     }
-
-    
 }
